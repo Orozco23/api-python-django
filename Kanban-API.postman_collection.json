@@ -1,0 +1,137 @@
+{
+	"info": {
+		"_postman_id": "bebd2976-d786-46b6-8333-7b67b7efb8b7",
+		"name": "Kanban API",
+		"description": "This API handles the cards of a kanban board",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12949821"
+	},
+	"item": [
+		{
+			"name": "Cards",
+			"item": [
+				{
+					"name": "Get Cards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cards",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Card",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Create catabase\", \r\n    \"description\": \"Create database in Postgres\",\r\n    \"column\": \"In Progress\",\r\n    \"position\": 3,\r\n    \"due_date\": \"2025-03-30\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cards/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cards",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Card by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cards/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cards",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Card",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Create database\",\n    \"description\": \"Create database in postgres\",\n    \"column\": \"In Progress\",\n    \"position\": 2,\n    \"due_date\": \"2025-03-13\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/cards/update/{{id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"cards",
+								"update",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Card",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/cards/delete/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cards",
+								"delete",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
