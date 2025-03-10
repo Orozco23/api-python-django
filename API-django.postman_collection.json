@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "eb02f652-b1c7-4670-9956-2cdf45886e19",
+		"name": "API-django",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12949821"
+	},
+	"item": [
+		{
+			"name": "Paintings",
+			"item": [
+				{
+					"name": "Create Painting",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"The Rock of Montmajour with Pine Trees\",\r\n  \"author\": \"Vincent van Gogh\",\r\n  \"month_created\": 6,\r\n  \"year_created\": 1888,\r\n  \"description\": \"Van Gogh drew this jagged rock with pine trees using a reed pen – a drawing tool that lent itself to supple and vigorous lines. He developed his own drawing style with it, consisting of stipples and stripes in all sizes, thicknesses and directions.\",\r\n  \"material\": \"pencil, pen, reed pen and brush and ink, on paper\",\r\n  \"dimensions\": \"49.1 cm x 61 cm\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/paintings/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"paintings",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Painting by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/paintings/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"paintings",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Painting",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Mona Lisa Updated\",\r\n  \"author\": \"Leonardo da Vinci\",\r\n  \"month_created\": 10,\r\n  \"year_created\": 1503,\r\n  \"description\": \"Updated description of the Mona Lisa\",\r\n  \"material\": \"Oil on canvas\",\r\n  \"dimensions\": \"53 x 77 cm\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/paintings/update/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"paintings",
+								"update",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Painting",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/paintings/delete/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"paintings",
+								"delete",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Paintings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/paintings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"paintings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
