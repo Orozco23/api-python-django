@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'painting', # my app
+    'card', # my app
     'rest_framework' # djangorestframework
 ]
 
