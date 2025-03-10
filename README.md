@@ -1,6 +1,6 @@
-# Painting API Django
+# KANBAN API Django
 
-This project is a CRUD API to manage paintings using Django and Django Rest Framework.
+This project is a CRUD API to manage the cards of a kanban board using Django and Django Rest Framework.
 
 --- 
 ### Summary
@@ -38,7 +38,7 @@ api-python-django
 │   │   ├── urls.py
 │   │   ├── wsgi.py
 │   │   └── asgi.py
-│   ├── painting
+│   ├── card
 │   │   │__ migrations
 │   │       ├── __init__.py
 │   │       └── 0001_initial.py
@@ -52,14 +52,14 @@ api-python-django
 │   └──manage.py
 ├──database
 │   └── docker-compose.yml
-├── API-django.postman_collections.json  
+├── Kanban-API.postman_collections.json  
 └── README.md
 ```
 ---
 <a id="database"></a>
 ## <center>DATABASE</center>
 
-Postgres is being used with docker
+Postgres is running from docker
 
 In windows it is necessary to make sure that WSL2 is active. 
 Command to check that it is enabled:
@@ -100,7 +100,7 @@ Once the container is running, you can connect to PostgreSQL from your Windows s
         Port: 5432
         User: The one you defined in the docker-compose.yml (default “admin”).
         Password: The one you defined in the docker-compose.yml (default “admin”).
-        Database: The name you defined in the docker-compose.yml (default “mydatabase”).
+        Database: The name you defined in the docker-compose.yml ("paintingAPI").
     ```
 
 <br>
@@ -172,43 +172,43 @@ If you need to access the container to execute PostgreSQL commands, you can use:
 <a id="api-use"></a>
 ## <center> API USE </center>
 
-The API allows the following CRUD operations to be performed on the paintings:
+The API allows the following CRUD operations to be performed on the cards:
 
 * **HOST:** http://localhost:8000
 
-- [**Create a painting:**](#create-painting)  `POST /api/paintings/create`
-- [**Get painting by id:**](#get-by-id) `GET /api/paintigs/{id}`
-- [**Get paintings:**](#get-list) `GET /api/paintings`
-- [**Update painting:**](#update) `PUT /api/paintings/update/{id}`
-- [**Delete painting:**](#delete) `DELETE /api/paintings/delete/{id}`
+- [**Create a card:**](#create-card)  `POST /api/cards/create`
+- [**Get card by id:**](#get-by-id) `GET /api/cards/{id}`
+- [**Get cards:**](#get-list) `GET /api/cards`
+- [**Update card:**](#update) `PUT /api/cards/update/{id}`
+- [**Delete card:**](#delete) `DELETE /api/cards/delete/{id}`
 
 ---
 <a id="model"></a>
 ## <center> MODEL </center>
 
 ``` python
-class Painting(models.Model):
-    title = models.CharField(max_length=255, verbose_name="Title")
-    author = models.CharField(max_length=255, verbose_name="Author")
-    month_created = models.PositiveIntegerField(
-        verbose_name="Month created",
-        validators=[
-            MinValueValidator(1),  # Minimum month 1 (January)
-            MaxValueValidator(12)  # Maximum 12 (December)
-        ]
+class Card(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Card Title")
+    description = models.TextField(verbose_name="Card Description", blank=True, null=True)
+    column = models.CharField(
+        max_length=20,
+        verbose_name="Column",
+        choices=[
+            ('To Do', 'To Do'),
+            ('In Progress', 'In Progress'),
+            ('Done', 'Done')
+        ],
+        default='To Do'
     )
-    year_created = models.PositiveIntegerField(
-        verbose_name="Year created", 
-        validators=[
-            MinValueValidator(1),  # Minimum year allowed
-            MaxValueValidator(datetime.datetime.now().year)  # Maximum year allowed (current year)
-        ]
-    )
-    description = models.TextField(verbose_name="Description", blank=True, null=True)
-    material = models.CharField(max_length=255, verbose_name="Material used")
-    dimensions = models.CharField(max_length=100, verbose_name="Size (Width x Height in cm)")
-    creation_date = models.DateTimeField(auto_now_add=True, verbose_name="Registration date")
-    updated_date = models.DateTimeField(auto_now=True, verbose_name="Last update")
+    position = models.PositiveIntegerField(verbose_name="Position in List", validators=[MinValueValidator(1)])
+    due_date = models.DateTimeField(verbose_name="Due Date", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+
+    class Meta:
+        ordering = ['column', 'position']  # Sort cards by position in the list
+    def __str__(self):
+        return self.title
 
 ```
 
@@ -217,26 +217,23 @@ class Painting(models.Model):
 <a id="endpoints"></a>
 ## <center> ENDPOINTS </center>
 
-<a id="create-painting"></a>
+<a id="create-card"></a>
 
-### **CREATE Painting**
+### **CREATE Card**
   * **Method:** POST
   * **Note**
-    * > Create a painting
-  * **route:** {host}/api/paintings/create        
+    * > Create a card
+  * **Route:** {host}/api/cards/create        
   * **Body:**
 
     ```json
         {
-            "title": {str},
-            "author": {str},
-            "month_created": {int},
-            "year_created": {int},
+            "title":{str}, 
             "description": {str},
-            "material": {str},
-            "dimensions": {str}
-            }
-        
+            "column": {str},
+            "position": {int},
+            "due_date": {str}
+        }       
  * **Response**:
       * **HTTP STATUS**: 201
       * **Body**:
@@ -245,16 +242,13 @@ class Painting(models.Model):
         {
             "id": {int},
             "title": {str},
-            "author": {str},
-            "month_created": {int},
-            "year_created": {int},
             "description": {str},
-            "material": {str},
-            "dimensions": {str},
-            "creation_date": {date},
-            "updated_date": {date}
-        }
-    
+            "column": {str},
+            "position": {int},
+            "due_date": {str},
+            "created_at": {str},
+            "updated_at": {str}
+        }  
   * **Errors**:
     * **HHTP STATUS**: 400
     * **HHTP STATUS**: 500
@@ -269,8 +263,8 @@ class Painting(models.Model):
 ### **GET BY ID**
   * **Method:** GET
   * **Note**
-    * > Returns painting by id
-  * **Route:** {host}/api/paintigs/{id}
+    * > Returns card by id
+  * **Route:** {host}/api/cards/{id}
  * **Response**:
       * **HTTP STATUS**: 200
       * **Body**:
@@ -278,14 +272,12 @@ class Painting(models.Model):
         {
             "id": {int},
             "title": {str},
-            "author": {str},
-            "month_created": {int},
-            "year_created": {int},
             "description": {str},
-            "material": {str},
-            "dimensions": {str},
-            "creation_date": {date},
-            "updated_date": {date}
+            "column": {str},
+            "position": {int},
+            "due_date": {str},
+            "created_at": {str},
+            "updated_at": {str}
         }
 * **Error**:
     * **HHTP STATUS**: 500
@@ -295,15 +287,15 @@ class Painting(models.Model):
 ### **GET LIST**
   * **Method:** GET
   * **Note**
-    * > Returns list of paintings
-  * **Route:** {host}/api/paintings
+    * > Returns list of cards
+  * **Route:** {host}/api/cards
  * **Response**:
       * **HTTP STATUS**: 200
       * **Body**:
     ```json
         {
             [
-                {Painting},
+                {Card},
                 ...
             ]
         }
@@ -316,21 +308,31 @@ class Painting(models.Model):
 ### **UPDATE**
   * **Method:** PUT
   * **Note**
-    * > Update a painting
-  * **Route:** {host}/api/paintings/update/{id}
+    * > Update a card
+  * **Route:** {host}/api/cards/update/{id}
+  * **Body**:
+    ```json
+        {
+            "title":{str}, 
+            "description": {str},
+            "column": {str},
+            "position": {int},
+            "due_date": {str}
+        }
  * **Response**:
       * **HTTP STATUS**: 200
       * **Body**:
     ```json
         {
+            "id": {int},
             "title": {str},
-            "author": {str},
-            "month_created": {int},
-            "year_created": {int},
             "description": {str},
-            "material": {str},
-            "dimensions": {str}
-        }
+            "column": {str},
+            "position": {int},
+            "due_date": {str},
+            "created_at": {str},
+            "updated_at": {str}
+        }  
 * **Errors**:
     * **HHTP STATUS**: 400
     * **HHTP STATUS**: 500
@@ -345,8 +347,8 @@ class Painting(models.Model):
 ### **DELETE**
   * **Method:** DELETE
   * **Note**
-    * > Delete a painting
-  * **Ruta:** {host}/api/painting/delete/{id}
+    * > Delete a card
+  * **Ruta:** {host}/api/cards/delete/{id}
  * **Response**:
       * **HTTP STATUS**: 204
       * **Body**: No content
