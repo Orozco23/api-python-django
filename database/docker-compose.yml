@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: admin  # user name
+      POSTGRES_PASSWORD: admin  # database password
+      POSTGRES_DB: paintingAPI  # database name
+    ports:
+      - "5432:5432"  # Map port 5432 of the container to port 5432 of your machine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Uses a volume to persist PostgreSQL data
+
+volumes:
+  postgres_data:
+    driver: local
